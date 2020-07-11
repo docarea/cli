@@ -35,7 +35,7 @@ token=$(echo $tokenrequest | jq -r '.access_token')
 uploadtokenrequest=$(curl -s -H 'Content-Type: application/json' \
  -H "Authorization: Bearer ${token}" \
  -X POST \
- --data '{"state": "ok", "code": 200, "object": { "documentationId": "'${DOCUMENTATION_ID}'", "size": '${SIZE}', "checksum":"'${ARCHIVE_CHECKSUM}'"}}' \
+ --data '{"state": "ok", "code": 200, "object": { "documentationId": "'${DOCUMENTATION_ID}'", "size": '${SIZE}', "checksum":"'${ARCHIVE_CHECKSUM}'", "sendMeta": false}}' \
  ${API_ENDPOINT}/api/upload/request)
 
 uploadtoken=$(echo "${uploadtokenrequest}" | jq -r '.object.uploadToken')
