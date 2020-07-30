@@ -2,11 +2,27 @@
 
 # Please Change the following Values
 
-DOCUMENTATION_ID=""
+if [[ -z "${DOCAREA_DOCUMENTATION_ID}" ]]; then
+  DOCUMENTATION_ID=""
+else
+  DOCUMENTATION_ID="${DOCAREA_DOCUMENTATION_ID}"
+fi
 
-CLIENT_ID=""
-CLIENT_SECRET=""
-API_ENDPOINT="http://www.docarea.io"
+
+if [[ -z "${DOCAREA_CLIENT_ID}" ]]; then
+  CLIENT_ID=""
+else
+  CLIENT_ID="${DOCAREA_CLIENT_ID}"
+fi
+
+
+if [[ -z "${DOCAREA_CLIENT_SECRET}" ]]; then
+  CLIENT_SECRET=""
+else
+  CLIENT_SECRET="${DOCAREA_CLIENT_SECRET}"
+fi
+
+API_ENDPOINT="https://www.docarea.io"
 
 # DO NOT CHANGE ANYTHING BELOW
 
@@ -42,10 +58,8 @@ uploadtoken=$(echo "${uploadtokenrequest}" | jq -r '.object.uploadToken')
 
 echo "Upload Archive"
 curl  -s --request POST \
---data-binary "@${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea" \
+-F "documentation=@${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea" \
 -H "Authorization: Bearer ${token}" \
--H 'Content-Type: application/vnd.docarea+archive' \
 "${API_ENDPOINT}/api/upload/${uploadtoken}"
 
-echo ${TEMP_UPLOAD_DIR}
-# rm ${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea
+echo "Done"
