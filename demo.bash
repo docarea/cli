@@ -33,7 +33,7 @@ SIZE=$(du -sb ${uploaddoc} | awk '{print $1}')
 ARCHIVE_NAME=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 TEMP_UPLOAD_DIR=$(mktemp -d -t docarea-XXXXXXXXXX)
 
-cd $uploaddoc; tar --xz -cf ${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea *
+cd $uploaddoc; tar --xz -cf ${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea * .*
 
 ARCHIVE_CHECKSUM=$(sha256sum ${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea | awk '{print $1}')
 
