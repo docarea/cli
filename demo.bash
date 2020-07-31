@@ -7,7 +7,7 @@ if [[ -z "${DOCAREA_DOCUMENTATION_ID}" ]]; then
 else
   DOCUMENTATION_ID="${DOCAREA_DOCUMENTATION_ID}"
 fi
-
+echo $DOCUMENTATION_ID
 
 if [[ -z "${DOCAREA_CLIENT_ID}" ]]; then
   CLIENT_ID=""
@@ -51,7 +51,7 @@ tokenrequest=$(curl -s \
   -X POST \
   -d 'grant_type=client_credentials&scope=upload_documentation&client_id='$CLIENT_ID'&client_secret='$CLIENT_SECRET \
   ${API_ENDPOINT}/oauth2/token/)
-
+echo $tokenrequest
 token=$(echo $tokenrequest | jq -r '.access_token')
 
 echo "Announce upload"
