@@ -40,7 +40,7 @@ fi
 
 TEMP_UPLOAD_DIR=$(mktemp -d -t docarea-XXXXXXXXXX)
 echo "Compress Documentation"
-cd $uploaddoc; tar --xz -cf ${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea * .*
+cd $uploaddoc; tar --xz -cf ${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea --exclude ".." * ./.*
 echo "Build Checksum"
 ARCHIVE_CHECKSUM=$(sha256sum ${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea | awk '{print $1}')
 
