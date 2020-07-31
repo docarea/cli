@@ -28,18 +28,19 @@ API_ENDPOINT="https://www.docarea.io"
 
 uploaddoc=$1
 
-
+echo "Calculate Size"
 SIZE=$(du -sb ${uploaddoc} | awk '{print $1}')
+echo "Build Meta Dependencies"
 ARCHIVE_NAME=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 TEMP_UPLOAD_DIR=$(mktemp -d -t docarea-XXXXXXXXXX)
-
+echo "Compress Documentation"
 cd $uploaddoc; tar --xz -cf ${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea * .*
-
+echo "Build Checksum"
 ARCHIVE_CHECKSUM=$(sha256sum ${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea | awk '{print $1}')
 
 #  --data '{ "grant_type": "client_credentials", "scope": "read", "CLIENT_ID": "'$CLIENT_ID'", "CLIENT_SECRET": "'$CLIENT_SECRET'" }' \
 #--header "Content-Type: application/json"
-
+echo "Request permission"
 tokenrequest=$(curl -s \
   -X POST \
   -d 'grant_type=client_credentials&scope=upload_documentation&client_id='$CLIENT_ID'&client_secret='$CLIENT_SECRET \
@@ -47,7 +48,7 @@ tokenrequest=$(curl -s \
 
 token=$(echo $tokenrequest | jq -r '.access_token')
 
-
+echo "Announce upload"
 uploadtokenrequest=$(curl -s -H 'Content-Type: application/json' \
  -H "Authorization: Bearer ${token}" \
  -X POST \
