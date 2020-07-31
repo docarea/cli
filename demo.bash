@@ -54,9 +54,10 @@ tokenrequest=$(curl -s \
 
 
 {
-  echo $tokenrequest | jq -r '.access_token' &&
-  token=$(echo $tokenrequest | jq -r '.access_token')
+  echo $tokenrequest | jq -r '.access_token' && \
+  token=$(echo $tokenrequest | jq -r '.access_token') &&
 } || {
+  echo "ERROR"
   echo $tokenrequest
   exit 1
 }
