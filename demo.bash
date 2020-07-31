@@ -61,8 +61,6 @@ uploadtokenrequest=$(curl -s -H 'Content-Type: application/json' \
  --data '{"state": "ok", "code": 200, "object": { "documentationId": "'${DOCUMENTATION_ID}'", "size": '${SIZE}', "checksum":"'${ARCHIVE_CHECKSUM}'", "sendMeta": false}}' \
  ${API_ENDPOINT}/api/upload/request)
  
-echo $uploadtokenrequest
-
 uploadtoken=$(echo "${uploadtokenrequest}" | jq -r '.object.uploadToken')
 
 echo "Upload Archive"
