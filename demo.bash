@@ -31,7 +31,13 @@ uploaddoc=$1
 echo "Calculate Size"
 SIZE=$(du -sb ${uploaddoc} | awk '{print $1}')
 echo "Build Meta Dependencies"
-ARCHIVE_NAME=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
+ARCHIVE_NAME=$(timeout --foreground 5s cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
+if [[ -z "${ARCHIVE_NAME}" ]]; then
+  ARCHIVE_NAME="CANTACCESSURANDOM"
+fi
+
 TEMP_UPLOAD_DIR=$(mktemp -d -t docarea-XXXXXXXXXX)
 echo "Compress Documentation"
 cd $uploaddoc; tar --xz -cf ${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea * .*
