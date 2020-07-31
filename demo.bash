@@ -52,15 +52,7 @@ tokenrequest=$(curl -s \
   -d 'grant_type=client_credentials&scope=upload_documentation&client_id='$CLIENT_ID'&client_secret='$CLIENT_SECRET \
   ${API_ENDPOINT}/oauth2/token/)
 
-
-{
-  echo $tokenrequest | jq -r '.access_token' && \
-  token=$(echo $tokenrequest | jq -r '.access_token') &&
-} || {
-  echo "ERROR"
-  echo $tokenrequest
-  exit 1
-}
+token=$(echo $tokenrequest | jq -r '.access_token')
 
 echo "Announce upload"
 uploadtokenrequest=$(curl -s -H 'Content-Type: application/json' \
