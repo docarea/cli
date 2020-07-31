@@ -53,7 +53,6 @@ tokenrequest=$(curl -s \
   ${API_ENDPOINT}/oauth2/token/)
 
 echo $tokenrequest
-
 token=$(echo $tokenrequest | jq -r '.access_token')
 
 echo "Announce upload"
