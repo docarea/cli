@@ -49,9 +49,10 @@ ARCHIVE_CHECKSUM=$(sha256sum ${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea | awk '{
 echo "Request permission"
 tokenrequest=$(curl -s \
   -X POST \
-  -d 'grant_type=client_credentials&scope=upload_documentation&client_id=${{ CLIENT_ID }}&client_secret=${{ CLIENT_SECRET }}' \
+  -d 'grant_type=client_credentials&scope=upload_documentation&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}' \
   ${API_ENDPOINT}/oauth2/token/)
 echo $tokenrequest
+echo 'grant_type=client_credentials&scope=upload_documentation&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}'
 token=$(echo $tokenrequest | jq -r '.access_token')
 
 echo "Announce upload"
