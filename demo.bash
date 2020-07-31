@@ -7,7 +7,7 @@ if [[ -z "${DOCAREA_DOCUMENTATION_ID}" ]]; then
 else
   DOCUMENTATION_ID="${DOCAREA_DOCUMENTATION_ID}"
 fi
-echo $DOCUMENTATION_ID
+echo ${DOCUMENTATION_ID}
 
 if [[ -z "${DOCAREA_CLIENT_ID}" ]]; then
   CLIENT_ID=""
