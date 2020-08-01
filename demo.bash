@@ -28,6 +28,8 @@ API_ENDPOINT="https://www.docarea.io"
 
 uploaddoc=$1
 
+echo "Use ID ${DOCUMENTATION_ID}"
+
 echo "Calculate Size"
 SIZE=$(du -sb ${uploaddoc} | awk '{print $1}')
 echo "Build Meta Dependencies"
