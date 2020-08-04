@@ -16,12 +16,19 @@ limitations under the License.
 package cmd
 
 import (
+	"docArea/core"
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 )
 
+var api_endpoint = core.Config_api_endpoint
 
+// flags for upload command
+var documentationid, clientid, clientsecret string
 
 // uploadCmd represents the upload command
 var uploadCmd = &cobra.Command{
@@ -40,14 +47,14 @@ to quickly create a Cobra application.`,
 
 		// Hä?
 		if len(args) < 1 {
-			message += "\nDocumentation path at end of command missing\n"
+			message += "Documentation path at end of command missing\n"
 		}else if len(args) > 1 {
-			message += "\nToo many arguments, only documentation path required\n "
+			message += "Too many arguments, only documentation path required\n "
 		}
 
 		if documentationid == "" || clientid == "" || clientsecret == "" {
 
-			message += "\nPlease specify the following values: \n"
+			message += "Please specify the following flags: \n"
 
 			if documentationid == "" {
 				message += "Documentation ID by using --documentation-id [documentation-id]\n"
@@ -71,6 +78,22 @@ to quickly create a Cobra application.`,
 
 	PreRun: func(cmd *cobra.Command, args []string) {
 
+		response, error := http.PostForm(api_endpoint + "oauth2/token", url.Values{
+			"grant_type": {"client_credentials"},
+			"scope": {"upload_documentation"},
+			"client_id": {clientid},
+			"client_secret": {clientsecret}})
+
+		body, error := ioutil.ReadAll(response.Body)
+
+		response.Body.Close()
+
+		if error != nil {
+			fmt.Println(error)
+		}
+
+		fmt.Println(string(body))
+
 	},
 
 	Run: func(cmd *cobra.Command, args []string) {
@@ -79,8 +102,7 @@ to quickly create a Cobra application.`,
 	},
 }
 
-// flags for upload command
-var documentationid, clientid, clientsecret string
+
 
 func init() {
 	rootCmd.AddCommand(uploadCmd)
