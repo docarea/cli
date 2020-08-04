@@ -19,8 +19,8 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
-    - name: changedir
-      run: cd src
+    - name: Change Workdir
+      working-directory: src/
     - name: Generate build files
       uses: thatisuday/go-cross-build@v1
       with:
