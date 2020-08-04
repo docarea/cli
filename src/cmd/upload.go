@@ -47,7 +47,7 @@ to quickly create a Cobra application.`,
 
 		if documentationid == "" || clientid == "" || clientsecret == "" {
 
-			message = "\nPlease specify the following values: \n"
+			message += "\nPlease specify the following values: \n"
 
 			if documentationid == "" {
 				message += "Documentation ID by using --documentation-id [documentation-id]\n"
