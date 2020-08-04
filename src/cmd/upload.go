@@ -92,7 +92,7 @@ to quickly create a Cobra application.`,
 		if error != nil {
 			fmt.Println(error)
 		}else {
-			
+
 		}
 
 		fmt.Println(string(body))
