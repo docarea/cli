@@ -26,6 +26,7 @@ import (
 )
 
 var api_endpoint = core.Config_api_endpoint
+var access_token string
 
 // flags for upload command
 var documentationid, clientid, clientsecret string
@@ -78,7 +79,7 @@ to quickly create a Cobra application.`,
 
 	PreRun: func(cmd *cobra.Command, args []string) {
 
-		response, error := http.PostForm(api_endpoint + "oauth2/token", url.Values{
+		response, error := http.PostForm(api_endpoint + "/oauth2/token/", url.Values{
 			"grant_type": {"client_credentials"},
 			"scope": {"upload_documentation"},
 			"client_id": {clientid},
@@ -90,6 +91,8 @@ to quickly create a Cobra application.`,
 
 		if error != nil {
 			fmt.Println(error)
+		}else {
+			
 		}
 
 		fmt.Println(string(body))
