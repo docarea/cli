@@ -16,22 +16,23 @@ limitations under the License.
 package cmd
 
 import (
+	"bytes"
 	"docArea/core"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
 	"net/http"
-	"net/url"
 )
 
 // build_docArea.exe upload --documentation-id 720507cb-a770-4e11-8e39-d5ed4d64f681 --client-id iOOhtmvY4w8zwfER7Ls6gfhOKjmsT8x1259Vu4Ob --client-secret ZR0HUciLgJgdQVycVSKtMuJ3AsuPL9b9yHwsUKsdljkXTepnOYc7dDF4uj7fLF4gVtKrQ6skjwTO8T8N7HLKpVr6yy0jR3J5vIpOmrkTZfar4IJJY4JjfgtG8ln0Zvoc path
 
-var api_endpoint = core.Config_api_endpoint
-var access_token string
+var apiEndpoint = core.ConfigApiEndpoint
+var accessToken string
+var expireDate float64
 
 // flags for upload command
-var documentationid, clientid, clientsecret string
+var documentationId, clientId, clientSecret string
 
 // uploadCmd represents the upload command
 var uploadCmd = &cobra.Command{
@@ -55,17 +56,17 @@ to quickly create a Cobra application.`,
 			message += "Too many arguments, only documentation path required\n "
 		}
 
-		if documentationid == "" || clientid == "" || clientsecret == "" {
+		if documentationId == "" || clientId == "" || clientSecret == "" {
 
 			message += "Please specify the following flags: \n"
 
-			if documentationid == "" {
+			if documentationId == "" {
 				message += "Documentation ID by using --documentation-id [documentation-id]\n"
 			}
-			if clientid == "" {
+			if clientId == "" {
 				message += "Client ID by using --client-id [client-id]\n"
 			}
-			if clientsecret == "" {
+			if clientSecret == "" {
 				message += "Client Secret by using --client-secret [client-secret]\n"
 			}
 
@@ -80,38 +81,49 @@ to quickly create a Cobra application.`,
 	},
 
 	Run: func(cmd *cobra.Command, args []string) {
+
 		fmt.Println("upload called\n")
 
-		response, error := http.PostForm(api_endpoint + "/oauth2/token/", url.Values{
-			"grant_type": {"client_credentials"},
-			"scope": {"upload_documentation"},
-			"client_id": {clientid},
-			"client_secret": {clientsecret}})
+		accessToken, expireDate = core.GetAccessToken(clientId, clientSecret)
 
-		if error != nil {
-			fmt.Println(error)
-			return
+		// Request for Upload
+		type UploadObjectTemplate struct {
+			DocumentationID string `json:"documentationId"`
+			Size            int    `json:"size"`
+			Checksum        string `json:"checksum"`
+			SendMeta        bool   `json:"sendMeta"`
 		}
 
-		var result map[string]interface{}
-
-		json.NewDecoder(response.Body).Decode(&result)
-
-		access_token := result["access_token"]
-
-		fmt.Println(access_token)
-
-		type uploadrequestbody struct {
+		type UploadTemplate struct {
 			State  string `json:"state"`
 			Code   int    `json:"code"`
-			Object struct {
-				DocumentationID string `json:"documentationId"`
-				Size            int    `json:"size"`
-				Checksum        string `json:"checksum"`
-				SendMeta        bool   `json:"sendMeta"`
-			} `json:"object"`
+			Object UploadObjectTemplate `json:"object"`
 		}
 
+		uploadrequestbody := &UploadTemplate{
+			State: "ok",
+			Code: 200,
+			Object: UploadObjectTemplate{
+				DocumentationID: documentationId,
+				Size:            1,
+				Checksum:        "ff",
+				SendMeta:        false,
+			},
+		}
+
+		uploadrequest, _ := json.Marshal(uploadrequestbody)
+
+		client := &http.Client{}
+		request, _ := http.NewRequest("POST", apiEndpoint+"/api/upload/request", bytes.NewBuffer(uploadrequest))
+		request.Header.Set("Authorization", "Bearer "+accessToken)
+		request.Header.Set("content-type", "application/json")
+		uploadresponse, _ := client.Do(request)
+
+		var uploadtokenresult map[string]interface{}
+
+		json.NewDecoder(uploadresponse.Body).Decode(&uploadtokenresult)
+
+		fmt.Println(uploadtokenresult)
 
 
 	},
@@ -122,8 +134,8 @@ to quickly create a Cobra application.`,
 func init() {
 	rootCmd.AddCommand(uploadCmd)
 
-	uploadCmd.PersistentFlags().StringVar(&documentationid, "documentation-id",  "", "Documentation ID (required)")
-	uploadCmd.PersistentFlags().StringVar(&clientid, "client-id",  "", "Client ID to upload specific documentation (required)")
-	uploadCmd.PersistentFlags().StringVar(&clientsecret, "client-secret", "", "Client Secret to upload specific documentation (required)")
+	uploadCmd.PersistentFlags().StringVar(&documentationId, "documentation-id",  "", "Documentation ID (required)")
+	uploadCmd.PersistentFlags().StringVar(&clientId, "client-id",  "", "Client ID to upload specific documentation (required)")
+	uploadCmd.PersistentFlags().StringVar(&clientSecret, "client-secret", "", "Client Secret to upload specific documentation (required)")
 
 }
