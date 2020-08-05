@@ -17,13 +17,15 @@ package cmd
 
 import (
 	"docArea/core"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/spf13/cobra"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 )
+
+// build_docArea.exe upload --documentation-id 720507cb-a770-4e11-8e39-d5ed4d64f681 --client-id iOOhtmvY4w8zwfER7Ls6gfhOKjmsT8x1259Vu4Ob --client-secret ZR0HUciLgJgdQVycVSKtMuJ3AsuPL9b9yHwsUKsdljkXTepnOYc7dDF4uj7fLF4gVtKrQ6skjwTO8T8N7HLKpVr6yy0jR3J5vIpOmrkTZfar4IJJY4JjfgtG8ln0Zvoc path
 
 var api_endpoint = core.Config_api_endpoint
 var access_token string
@@ -77,7 +79,8 @@ to quickly create a Cobra application.`,
 
 	},
 
-	PreRun: func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("upload called\n")
 
 		response, error := http.PostForm(api_endpoint + "/oauth2/token/", url.Values{
 			"grant_type": {"client_credentials"},
@@ -85,22 +88,31 @@ to quickly create a Cobra application.`,
 			"client_id": {clientid},
 			"client_secret": {clientsecret}})
 
-		body, error := ioutil.ReadAll(response.Body)
-
-		response.Body.Close()
-
 		if error != nil {
 			fmt.Println(error)
-		}else {
-
+			return
 		}
 
-		fmt.Println(string(body))
+		var result map[string]interface{}
 
-	},
+		json.NewDecoder(response.Body).Decode(&result)
 
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("upload called\n")
+		access_token := result["access_token"]
+
+		fmt.Println(access_token)
+
+		type uploadrequestbody struct {
+			State  string `json:"state"`
+			Code   int    `json:"code"`
+			Object struct {
+				DocumentationID string `json:"documentationId"`
+				Size            int    `json:"size"`
+				Checksum        string `json:"checksum"`
+				SendMeta        bool   `json:"sendMeta"`
+			} `json:"object"`
+		}
+
+
 
 	},
 }
