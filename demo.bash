@@ -1,5 +1,7 @@
 #!/bin/bash
 
+apt-get update; apt-get install -y jq curl lzma 
+
 # Please Change the following Values
 
 if [[ -z "${DOCAREA_DOCUMENTATION_ID}" ]]; then
@@ -67,7 +69,6 @@ uploadtokenrequest=$(curl -s -H 'Content-Type: application/json' \
  -X POST \
  --data '{"state": "ok", "code": 200, "object": { "documentationId": "'${DOCUMENTATION_ID}'", "size": '${SIZE}', "checksum":"'${ARCHIVE_CHECKSUM}'", "sendMeta": false}}' \
  ${API_ENDPOINT}/api/upload/request/)
- 
 
  
 {
