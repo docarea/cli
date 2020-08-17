@@ -61,7 +61,7 @@ uploadtokenrequest=$(curl -s -H 'Content-Type: application/json' \
  -H "Authorization: Bearer ${token}" \
  -X POST \
  --data '{"state": "ok", "code": 200, "object": { "documentationId": "'${DOCUMENTATION_ID}'", "size": '${SIZE}', "checksum":"'${ARCHIVE_CHECKSUM}'", "sendMeta": false}}' \
- ${API_ENDPOINT}/api/upload/request)
+ ${API_ENDPOINT}/api/upload/request/)
  
 uploadtoken=$(echo "${uploadtokenrequest}" | jq -r '.object.uploadToken')
 
@@ -69,6 +69,6 @@ echo "Upload Archive"
 curl  -s --request POST \
 -F "documentation=@${TEMP_UPLOAD_DIR}/${ARCHIVE_NAME}.docarea" \
 -H "Authorization: Bearer ${token}" \
-"${API_ENDPOINT}/api/upload/${uploadtoken}"
+"${API_ENDPOINT}/api/upload/${uploadtoken}/"
 
 echo "Done"
