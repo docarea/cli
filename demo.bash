@@ -72,11 +72,6 @@ uploadtokenrequest=$(curl -s -H 'Content-Type: application/json' \
 
  
 {
-  uploadstate=$(echo "${uploadtokenrequest}" | jq -r '.state')
-  if [ $uploadstate = "err" ]; then
-    echo $uploadtokenrequest;
-  fi
-
   uploadtoken=$(echo "${uploadtokenrequest}" | jq -r '.object.uploadToken')
 } || {
   echo $uploadtokenrequest;
