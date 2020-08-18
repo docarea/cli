@@ -1,6 +1,6 @@
 #!/bin/bash
 
-apt-get update; apt-get install -y jq curl lzma 
+apt-get update; apt-get install -y jq curl lzma xz-utils
 
 # Please Change the following Values
 
